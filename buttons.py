@@ -1,16 +1,20 @@
 from PySide6.QtWidgets import QPushButton,QGridLayout
 from PySide6.QtCore import Slot
 from paths import MEDIUM_FONT_SIZE
-from utils import IsNumOrDot, isEmpty, isValidNumber, isOperator
 from display import Display
 from info import info
 
+#IsNumOrDot and isEmpty don't worked properly =(
+from utils import IsNumOrDot, isEmpty, isValidNumber, isOperator
+
+#Class to create a button
 class Button(QPushButton):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
 
         self.configStyle()
 
+    #Adding CSS to the button
     def configStyle(self):
         font = self.font()
         font.setPixelSize(MEDIUM_FONT_SIZE)
@@ -31,6 +35,8 @@ class ButtonGrid(QGridLayout):
 
         self.display = display
         self.infoWidget = infoSupDisplay
+
+        #Equation needs to be a ' ' (Space) because i need to check the last char in the string
         self._equation = ' '
 
         self._makeGrid
@@ -41,14 +47,18 @@ class ButtonGrid(QGridLayout):
         for row,text in enumerate(self._gridMask):
             for column,button_text in enumerate(text):
                 
+                #Skip empty space
                 if button_text == '':
                     continue
-
+                
+                #Get button text
                 button = Button(button_text)
 
+                #Setting up special buttons and operators (/*-+=^C...)
                 if not button_text in '1234567890.':
                     button.setProperty('cssClass','specialButton')
 
+                #Making 0 ocupy the empty space
                 if button_text == '0':
                     self.addWidget(button,row,column,1,2)
 
@@ -68,6 +78,7 @@ class ButtonGrid(QGridLayout):
             method(*args,**kwargs)
         return realSlot
 
+    #Adding functions to the special buttons
     def _specialButtons(self,button_char):
         if button_char == 'C':
             self.display.clear()
@@ -95,5 +106,6 @@ class ButtonGrid(QGridLayout):
                 self.display.setText('') #Clean the display
             return
 
+        #Put the button text into display
         self.display.insert(buttonText)
 
