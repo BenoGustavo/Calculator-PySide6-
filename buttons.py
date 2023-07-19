@@ -93,6 +93,8 @@ class ButtonGrid(QGridLayout):
             
             #Checking the string before eval
             try:
+                if '^' in self._equation:
+                    self._equation = self._equation.replace('^','**')
                 #Removing operators to check before eval the string
                 checkOperation = removeOperators(str(self._equation))
                 float(checkOperation)
@@ -104,9 +106,9 @@ class ButtonGrid(QGridLayout):
                 self._equation = ' '
                 self.infoWidget.setText(self._equation)
 
-            except ValueError:
+            except ValueError and ZeroDivisionError:
                 self.display.setPlaceholderText("BAD EQUATION")
-                
+
                 #Clear the calculator
                 self._specialButtons('C')
                 return
