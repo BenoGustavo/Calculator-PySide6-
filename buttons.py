@@ -5,7 +5,7 @@ from display import Display
 from info import info
 
 #IsNumOrDot and isEmpty don't worked properly =(
-from utils import IsNumOrDot, isEmpty, isValidNumber, isOperator
+from utils import IsNumOrDot, isEmpty, isValidNumber, isOperator, removeOperators
 
 #Class to create a button
 class Button(QPushButton):
@@ -80,10 +80,37 @@ class ButtonGrid(QGridLayout):
 
     #Adding functions to the special buttons
     def _specialButtons(self,button_char):
+        #Clear button
         if button_char == 'C':
             self.display.clear()
             self._equation = ' '
             self.infoWidget.setText(self._equation)
+
+        #Equals button
+        if button_char == '=':
+            self._equation += self.display.text()
+            self.display.clear()
+            
+            #Checking the string before eval
+            try:
+                #Removing operators to check before eval the string
+                checkOperation = removeOperators(str(self._equation))
+                float(checkOperation)
+
+                #Eval the string
+                self.display.setText(str(eval(self._equation)))
+
+                #Reset the _equation
+                self._equation = ' '
+                self.infoWidget.setText(self._equation)
+
+            except ValueError:
+                self.display.setPlaceholderText("BAD EQUATION")
+                
+                #Clear the calculator
+                self._specialButtons('C')
+                return
+
 
     def _insertContentIntoDisplay(self,button):
         buttonText = button.text()
@@ -92,6 +119,7 @@ class ButtonGrid(QGridLayout):
         #Verify if the button text is a special button (NOT A NUMBER OR OPERATOR)
         self._specialButtons(button.text())
 
+        #Changes the last operator if the display is empty.
         if isOperator(buttonText) and isOperator(self._equation[-1]) and self.display.text() == '':
             self._equation = self._equation[:-1] + buttonText
             self.infoWidget.setText(self._equation)
