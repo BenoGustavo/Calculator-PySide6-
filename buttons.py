@@ -5,7 +5,7 @@ from display import Display
 from info import info
 
 #IsNumOrDot and isEmpty don't worked properly =(
-from utils import IsNumOrDot, isEmpty, isValidNumber, isOperator, removeOperators
+from utils import IsNumOrDot, isEmpty, isValidNumber, isOperator, removeOperators, deleteLastChar, addDotAfterZero
 
 #Class to create a button
 class Button(QPushButton):
@@ -86,6 +86,14 @@ class ButtonGrid(QGridLayout):
             self._equation = ' '
             self.infoWidget.setText(self._equation)
 
+        #Backspace button
+        if button_char == '⌫':
+            if self.display.text() != '':
+                self.display.backspace()
+            else:
+                self._equation = deleteLastChar(self._equation)
+                self.infoWidget.setText(self._equation)
+
         #Equals button
         if button_char == '=':
             self._equation += self.display.text()
@@ -98,6 +106,14 @@ class ButtonGrid(QGridLayout):
                 #Removing operators to check before eval the string
                 checkOperation = removeOperators(str(self._equation))
                 float(checkOperation)
+
+                #Check if the last char is an operator then remove it
+                if isOperator(self._equation[-1]):
+                    self._equation = deleteLastChar(self._equation)
+                
+                #Add a comma after the first zero
+                if self._equation[1] == '0':
+                    self._equation = addDotAfterZero(self._equation)
 
                 #Eval the string
                 self.display.setText(str(eval(self._equation)))
@@ -121,11 +137,14 @@ class ButtonGrid(QGridLayout):
         #Verify if the button text is a special button (NOT A NUMBER OR OPERATOR)
         self._specialButtons(button.text())
 
-        #Changes the last operator if the display is empty.
-        if isOperator(buttonText) and isOperator(self._equation[-1]) and self.display.text() == '':
-            self._equation = self._equation[:-1] + buttonText
-            self.infoWidget.setText(self._equation)
-            return
+        try:
+            #Changes the last operator if the display is empty.
+            if isOperator(buttonText) and isOperator(self._equation[-1]) and self.display.text() == '':
+                self._equation = self._equation[:-1] + buttonText
+                self.infoWidget.setText(self._equation)
+                return
+        except IndexError:
+            self._equation = ' '+self._equation
 
         #If the display is empty don't put an operator
         if isOperator(buttonText) and self.display.text() == '':
