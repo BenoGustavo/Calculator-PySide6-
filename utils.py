@@ -5,6 +5,10 @@ NUM_OR_DOT_REGEX = re.compile(r'^[0-9.]$')
 def IsNumOrDot(string: str):
     return bool(NUM_OR_DOT_REGEX.search(string))
 
+def removeOperators(equation:str):
+    numbers = re.sub(r'[/*\-+\^]', '', equation)
+    return numbers
+
 def isValidNumber(string: str):
     try:
         float(string)
