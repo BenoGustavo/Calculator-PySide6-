@@ -23,3 +23,19 @@ def isOperator(string: str):
 
 def isEmpty(string: str):
     return string == ''
+
+def deleteLastChar(string: str):
+    if len(string) > 0:
+        return string[:-1]
+    else:
+        return string
+    
+def addDotAfterZero(string: str):
+    equation_list = list(string)
+
+    # Insert the dot at the desired position (between index 1 and 2)
+    equation_list.insert(2, '.')
+
+    # Join the elements back into a string
+    equation_with_dot = ''.join(equation_list)
+    return equation_with_dot
