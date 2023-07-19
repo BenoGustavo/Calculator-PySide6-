@@ -92,6 +92,15 @@ class ButtonGrid(QGridLayout):
         #Verify if the button text is a special button (NOT A NUMBER OR OPERATOR)
         self._specialButtons(button.text())
 
+        if isOperator(buttonText) and isOperator(self._equation[-1]) and self.display.text() == '':
+            self._equation = self._equation[:-1] + buttonText
+            self.infoWidget.setText(self._equation)
+            return
+
+        #If the display is empty don't put an operator
+        if isOperator(buttonText) and self.display.text() == '':
+            return
+
         if not isValidNumber(newDisplayValue):
             if isOperator(buttonText):
                 
