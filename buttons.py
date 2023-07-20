@@ -26,7 +26,7 @@ class ButtonGrid(QGridLayout):
         super().__init__(*args,**kwargs)
 
         self._gridMask = [
-            ['C','⌫','^','/'],
+            ['←','C','^','/'],
             ['7','8','9','*'],
             ['4','5','6','-'],
             ['1','2','3','+'],
@@ -53,9 +53,12 @@ class ButtonGrid(QGridLayout):
                 
                 #Get button text
                 button = Button(button_text)
+                
+                if button_text == '←':
+                   button.setProperty('cssClass','backSpaceButton')
 
                 #Setting up special buttons and operators (/*-+=^C...)
-                if not button_text in '1234567890.':
+                if not button_text in '1234567890.←':
                     button.setProperty('cssClass','specialButton')
 
                 #Making 0 ocupy the empty space
@@ -65,7 +68,7 @@ class ButtonGrid(QGridLayout):
                     buttonSlot = self._makeButtonDisplaySlot(self._insertContentIntoDisplay,button,)
                     button.clicked.connect(buttonSlot)
                     continue
-
+                
                 self.addWidget(button,row,column)
 
                 buttonSlot = self._makeButtonDisplaySlot(self._insertContentIntoDisplay,button,)
@@ -87,7 +90,7 @@ class ButtonGrid(QGridLayout):
             self.infoWidget.setText(self._equation)
 
         #Backspace button
-        if button_char == '⌫':
+        if button_char == '←':
             if self.display.text() != '':
                 self.display.backspace()
             else:
@@ -111,7 +114,7 @@ class ButtonGrid(QGridLayout):
                 if isOperator(self._equation[-1]):
                     self._equation = deleteLastChar(self._equation)
                 
-                #Add a comma after the first zero
+                #Add a comma after the first
                 if self._equation[1] == '0':
                     self._equation = addDotAfterZero(self._equation)
 
