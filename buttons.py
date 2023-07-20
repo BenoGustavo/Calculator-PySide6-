@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QPushButton,QGridLayout
-from PySide6.QtCore import Slot
+from PySide6.QtCore import Slot, Qt
 from paths import MEDIUM_FONT_SIZE
 from display import Display
 from info import info
@@ -13,6 +13,9 @@ class Button(QPushButton):
         super().__init__(*args,**kwargs)
 
         self.configStyle()
+
+        #Makes the button don't get focus when you click it
+        self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
     #Adding CSS to the button
     def configStyle(self):
@@ -94,6 +97,7 @@ class ButtonGrid(QGridLayout):
     #Adding functions to the special buttons
     @Slot()
     def _specialButtons(self,button_char):
+
         #Clear button
         if button_char == 'C':
             self.display.clear()
@@ -145,6 +149,7 @@ class ButtonGrid(QGridLayout):
 
     @Slot()
     def _insertContentIntoDisplay(self,text):
+        
         newDisplayValue = self.display.text() + text
 
         #Verify if the button text is a special button (NOT A NUMBER OR OPERATOR)

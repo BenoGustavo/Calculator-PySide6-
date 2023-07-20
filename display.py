@@ -16,6 +16,7 @@ class Display(QLineEdit):
         
         self.configStyle()
         self.setReadOnly(True)
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
 
     def configStyle(self):
         #Display style
