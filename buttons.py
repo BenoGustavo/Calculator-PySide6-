@@ -43,35 +43,45 @@ class ButtonGrid(QGridLayout):
     
     #Creating the buttons
     def _makeGrid(self):
+        #Making the keyboard work
+        self.display.backspaceTrigger.connect(self._specialButtons)
+        #Clear the calculator
+        self.display.clearTrigger.connect(self._specialButtons)
+        #Trigger Equals
+        self.display.equationTrigger.connect(self._specialButtons)
+        #Nums and dots keyborad
+        self.display.numAndDotTrigger.connect(self._insertContentIntoDisplay)
+        #Use operator in keyboard
+        self.display.operatorTrigger.connect(self._insertContentIntoDisplay)
 
         for row,text in enumerate(self._gridMask):
-            for column,button_text in enumerate(text):
+            for column,buttonText in enumerate(text):
                 
                 #Skip empty space
-                if button_text == '':
+                if buttonText == '':
                     continue
                 
                 #Get button text
-                button = Button(button_text)
+                button = Button(buttonText)
                 
-                if button_text == '←':
+                if buttonText == '←':
                    button.setProperty('cssClass','backSpaceButton')
 
                 #Setting up special buttons and operators (/*-+=^C...)
-                if not button_text in '1234567890.←':
+                if not buttonText in '1234567890.←':
                     button.setProperty('cssClass','specialButton')
 
                 #Making 0 ocupy the empty space
-                if button_text == '0':
+                if buttonText == '0':
                     self.addWidget(button,row,column,1,2)
 
-                    buttonSlot = self._makeButtonDisplaySlot(self._insertContentIntoDisplay,button,)
+                    buttonSlot = self._makeButtonDisplaySlot(self._insertContentIntoDisplay,buttonText,)
                     button.clicked.connect(buttonSlot)
                     continue
                 
                 self.addWidget(button,row,column)
 
-                buttonSlot = self._makeButtonDisplaySlot(self._insertContentIntoDisplay,button,)
+                buttonSlot = self._makeButtonDisplaySlot(self._insertContentIntoDisplay,buttonText,)
                 button.clicked.connect(buttonSlot)
     
     #Delaying the button function (WAITING TO SOMEONE TO PRESS)
@@ -82,6 +92,7 @@ class ButtonGrid(QGridLayout):
         return realSlot
 
     #Adding functions to the special buttons
+    @Slot()
     def _specialButtons(self,button_char):
         #Clear button
         if button_char == 'C':
@@ -132,29 +143,28 @@ class ButtonGrid(QGridLayout):
                 self._specialButtons('C')
                 return
 
-
-    def _insertContentIntoDisplay(self,button):
-        buttonText = button.text()
-        newDisplayValue = self.display.text() + buttonText
+    @Slot()
+    def _insertContentIntoDisplay(self,text):
+        newDisplayValue = self.display.text() + text
 
         #Verify if the button text is a special button (NOT A NUMBER OR OPERATOR)
-        self._specialButtons(button.text())
+        self._specialButtons(text)
 
         try:
             #Changes the last operator if the display is empty.
-            if isOperator(buttonText) and isOperator(self._equation[-1]) and self.display.text() == '':
-                self._equation = self._equation[:-1] + buttonText
+            if isOperator(text) and isOperator(self._equation[-1]) and self.display.text() == '':
+                self._equation = self._equation[:-1] + text
                 self.infoWidget.setText(self._equation)
                 return
         except IndexError:
             self._equation = ' '+self._equation
 
         #If the display is empty don't put an operator
-        if isOperator(buttonText) and self.display.text() == '':
+        if isOperator(text) and self.display.text() == '':
             return
 
         if not isValidNumber(newDisplayValue):
-            if isOperator(buttonText):
+            if isOperator(text):
                 
                 #Avoid double operator
                 #If the last char of the equation is a operator and the first char of the display is one too, do NOTHING
@@ -168,5 +178,5 @@ class ButtonGrid(QGridLayout):
             return
 
         #Put the button text into display
-        self.display.insert(buttonText)
+        self.display.insert(text)
 
