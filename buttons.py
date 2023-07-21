@@ -106,11 +106,17 @@ class ButtonGrid(QGridLayout):
 
         #add the value of pi to the display
         if button_char == 'π':
-            self.display.setText(f'{self.display.text()}3.1415')
+            self.display.insert('3.1415')
         
+        if button_char == '(':
+            self.display.insert('(')
+
+        if button_char == ')':   
+            self.display.insert(')')
+
         #Invert display number
         if button_char == '±' and button_char != '0':
-            
+
             #try multiply the display value by -1
             try:
                 displayValue = float(self.display.text()) * -1
@@ -225,4 +231,3 @@ class ButtonGrid(QGridLayout):
 
         #Put the button text into display
         self.display.insert(text)
-

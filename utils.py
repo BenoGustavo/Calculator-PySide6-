@@ -6,11 +6,16 @@ def IsNumOrDot(string: str):
     return bool(NUM_OR_DOT_REGEX.search(string))
 
 def removeOperators(equation:str):
-    numbers = re.sub(r'[/*.\-+\^%]', '', equation)
+    numbers = re.sub(r'[/*().\-+\^%]', '', equation)
     return numbers
 
 def isValidNumber(string: str):
     try:
+        if '(' in string:
+            string = string.replace('(','')
+        if ')' in string:
+            string = string.replace(')','')
+
         float(string)
         return True
     except ValueError:
