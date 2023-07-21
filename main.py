@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     #Setting up the display
     display = Display()
-    display.setPlaceholderText("I'm ready to calculate") #Setting a place holder text into the textbox
+    display.setPlaceholderText("...") #Setting a place holder text into the textbox
     window.addWidgetToVLayout(display) #Adding the text box to the layout
 
     #grid
