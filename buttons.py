@@ -29,11 +29,11 @@ class ButtonGrid(QGridLayout):
         super().__init__(*args,**kwargs)
 
         self._gridMask = [
-            ['←','C','^','/'],
-            ['7','8','9','*'],
-            ['4','5','6','-'],
-            ['1','2','3','+'],
-            ['0', '','.','='],
+            ['←','C','±','(',')'],
+            ['7','8','9','x','^'],
+            ['4','5','6','÷','π'],
+            ['1','2','3','-','%'],
+            ['0', '','.','+','='],
         ]
 
         self.display = display
@@ -104,6 +104,10 @@ class ButtonGrid(QGridLayout):
             self._equation = ' '
             self.infoWidget.setText(self._equation)
 
+        #add the value of pi to the display
+        if button_char == 'π':
+            self.display.setText(f'{self.display.text()}3.1415')
+
         #Backspace button
         if button_char == '←':
             if self.display.text() != '':
@@ -116,11 +120,17 @@ class ButtonGrid(QGridLayout):
         if button_char == '=':
             self._equation += self.display.text()
             self.display.clear()
-            
+
             #Checking the string before eval
             try:
+                #Changing visual operators to actual python operators
+                if '÷' in self._equation:
+                    self._equation = self._equation.replace('÷','/')
+                if 'x' in self._equation:
+                    self._equation = self._equation.replace('x','*')
                 if '^' in self._equation:
                     self._equation = self._equation.replace('^','**')
+
                 #Removing operators to check before eval the string
                 checkOperation = removeOperators(str(self._equation))
                 float(checkOperation)
@@ -134,7 +144,13 @@ class ButtonGrid(QGridLayout):
                     self._equation = addDotAfterZero(self._equation)
 
                 #Eval the string
-                self.display.setText(str(eval(self._equation)))
+                result = float(eval(self._equation))
+                
+                #Check if the result can be an intenger
+                if result.is_integer():
+                    result = int(result)
+
+                self.display.setText(str(result))
 
                 #Reset the _equation
                 self._equation = ' '
@@ -161,6 +177,7 @@ class ButtonGrid(QGridLayout):
                 self._equation = self._equation[:-1] + text
                 self.infoWidget.setText(self._equation)
                 return
+            
         except IndexError:
             self._equation = ' '+self._equation
 
