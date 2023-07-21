@@ -107,6 +107,19 @@ class ButtonGrid(QGridLayout):
         #add the value of pi to the display
         if button_char == 'π':
             self.display.setText(f'{self.display.text()}3.1415')
+        
+        #Invert display number
+        if button_char == '±' and button_char != '0':
+            try:
+                displayValue = float(self.display.text()) * -1
+                
+                if displayValue.is_integer():
+                    displayValue = int(displayValue)
+
+            except ValueError:
+                self.display.setPlaceholderText("BAD EQUATION")
+
+            self.display.setText(str(displayValue))
 
         #Backspace button
         if button_char == '←':
