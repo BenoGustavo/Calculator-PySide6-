@@ -117,6 +117,14 @@ class ButtonGrid(QGridLayout):
 
         #Invert display number
         if button_char == '±' and button_char != '0':
+            displayValue = self.display.text()
+
+            #If there is two parenthesis in the display and you try to negative the value
+            if '(' in self.display.text() and ')' in self.display.text():
+                self._equation += self.display.text() + 'x'
+                self.infoWidget.setText(self._equation)
+                self.display.setText('(-') #Clean the display
+                return
 
             #try multiply the display value by -1
             try:
@@ -126,7 +134,7 @@ class ButtonGrid(QGridLayout):
                     displayValue = int(displayValue)
 
             except ValueError:
-                self.display.setPlaceholderText("BAD EQUATION")
+                self.display.setPlaceholderText("...")
 
             self.display.setText(str(displayValue))
 
@@ -167,6 +175,14 @@ class ButtonGrid(QGridLayout):
                 if self._equation[1] == '0':
                     self._equation = addDotAfterZero(self._equation)
 
+                #Checking open parentesis
+                checkOpenParentesis = self._equation.rfind('(')
+                checkCloseParentesis = self._equation.rfind(')')
+                
+                #Closing parentesis if not open
+                if checkOpenParentesis > checkCloseParentesis:
+                    self._equation = self._equation + ')'
+
                 #Eval the string
                 result = float(eval(self._equation))
                 
@@ -181,7 +197,7 @@ class ButtonGrid(QGridLayout):
                 self.infoWidget.setText(self._equation)
 
             except ValueError and ZeroDivisionError:
-                self.display.setPlaceholderText("BAD EQUATION")
+                self.display.setPlaceholderText("Division by zero")
 
                 #Clear the calculator
                 self._specialButtons('C')
