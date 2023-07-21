@@ -47,6 +47,7 @@ class ButtonGrid(QGridLayout):
     #Creating the buttons
     def _makeGrid(self):
         #Making the keyboard work
+
         self.display.backspaceTrigger.connect(self._specialButtons)
         #Clear the calculator
         self.display.clearTrigger.connect(self._specialButtons)
@@ -56,6 +57,10 @@ class ButtonGrid(QGridLayout):
         self.display.numAndDotTrigger.connect(self._insertContentIntoDisplay)
         #Use operator in keyboard
         self.display.operatorTrigger.connect(self._insertContentIntoDisplay)
+        #Use left parenthesis in keyboard
+        self.display.leftParenthesisTrigger.connect(self._specialButtons)
+        #Use right parenthesis in keyboard
+        self.display.rightParenthesisTrigger.connect(self._specialButtons)
 
         for row,text in enumerate(self._gridMask):
             for column,buttonText in enumerate(text):
