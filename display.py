@@ -5,11 +5,15 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QKeyEvent
 
 class Display(QLineEdit):
+
+    #keyboard button triggers
     equationTrigger = Signal(str)
     backspaceTrigger = Signal(str)
     clearTrigger = Signal(str)
     numAndDotTrigger = Signal(str)
     operatorTrigger = Signal(str)
+    leftParenthesisTrigger = Signal(str)
+    rightParenthesisTrigger = Signal(str)
 
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
@@ -36,7 +40,9 @@ class Display(QLineEdit):
         isEnter = key in [KEYS.Key_Enter, KEYS.Key_Equal]
         isBackspace = key in [KEYS.Key_Backspace, KEYS.Key_Delete]
         isClear = key in [KEYS.Key_C,KEYS.Key_Escape]
-        isOperator = key in [KEYS.Key_Plus, KEYS.Key_Minus, KEYS.Key_Slash, KEYS.Key_Asterisk, KEYS.Key_P]
+        isOperator = key in [KEYS.Key_Plus, KEYS.Key_Minus, KEYS.Key_Slash, KEYS.Key_Asterisk, KEYS.Key_P, KEYS.Key_Percent]
+        isLeftParenthesis = key in [KEYS.Key_ParenLeft]
+        isRightParenthesis = key in [KEYS.Key_ParenRight]
 
         #Setting up their signal when pressed
         if isEnter:
@@ -57,6 +63,14 @@ class Display(QLineEdit):
             self.operatorTrigger.emit(str(text))
             return event.ignore()
         
+        if isLeftParenthesis:
+            self.leftParenthesisTrigger.emit('(')
+            return event.ignore()
+        
+        if isRightParenthesis:
+            self.rightParenthesisTrigger.emit(')')
+            return event.ignore()
+
         # if the button don't have text don't past by
         if isEmpty(text):
             return event.ignore()
