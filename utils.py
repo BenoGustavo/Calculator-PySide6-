@@ -6,7 +6,7 @@ def IsNumOrDot(string: str):
     return bool(NUM_OR_DOT_REGEX.search(string))
 
 def removeOperators(equation:str):
-    numbers = re.sub(r'[/*\-+\^]', '', equation)
+    numbers = re.sub(r'[/*.\-+\^]', '', equation)
     return numbers
 
 def isValidNumber(string: str):
@@ -17,7 +17,7 @@ def isValidNumber(string: str):
         return False
     
 def isOperator(string: str):
-    if string in '/*-+^':
+    if string in '÷x-+^':
         return True
     return False
 
