@@ -110,6 +110,8 @@ class ButtonGrid(QGridLayout):
         
         #Invert display number
         if button_char == '±' and button_char != '0':
+            
+            #try multiply the display value by -1
             try:
                 displayValue = float(self.display.text()) * -1
                 
@@ -136,21 +138,23 @@ class ButtonGrid(QGridLayout):
 
             #Checking the string before eval
             try:
+                #Check if the last char is an operator then remove it
+                if isOperator(self._equation[-1]):
+                    self._equation = deleteLastChar(self._equation)
+
                 #Changing visual operators to actual python operators
                 if '÷' in self._equation:
                     self._equation = self._equation.replace('÷','/')
                 if 'x' in self._equation:
                     self._equation = self._equation.replace('x','*')
+                if '%' in self._equation:
+                    self._equation = self._equation.replace('%','/100')
                 if '^' in self._equation:
                     self._equation = self._equation.replace('^','**')
 
                 #Removing operators to check before eval the string
                 checkOperation = removeOperators(str(self._equation))
                 float(checkOperation)
-
-                #Check if the last char is an operator then remove it
-                if isOperator(self._equation[-1]):
-                    self._equation = deleteLastChar(self._equation)
                 
                 #Add a comma after the first
                 if self._equation[1] == '0':
@@ -186,7 +190,7 @@ class ButtonGrid(QGridLayout):
 
         try:
             #Changes the last operator if the display is empty.
-            if isOperator(text) and isOperator(self._equation[-1]) and self.display.text() == '':
+            if isOperator(text) and isOperator(self._equation[-1]) and self.display.text() == '' and self._equation[-2] != '%':
                 self._equation = self._equation[:-1] + text
                 self.infoWidget.setText(self._equation)
                 return
@@ -198,6 +202,7 @@ class ButtonGrid(QGridLayout):
         if isOperator(text) and self.display.text() == '':
             return
 
+        #Setting up the operator after clicked
         if not isValidNumber(newDisplayValue):
             if isOperator(text):
                 
@@ -206,6 +211,12 @@ class ButtonGrid(QGridLayout):
                 if isOperator(self._equation[-1]) and isOperator(newDisplayValue[0]):
                     return
                 
+                if text == '%':
+                    self._equation += newDisplayValue + 'x'
+                    self.infoWidget.setText(self._equation)
+                    self.display.setText('') #Clean the display
+                    return
+
                 #Picking the display value and putting in the infoWidget
                 self._equation += newDisplayValue
                 self.infoWidget.setText(self._equation)
