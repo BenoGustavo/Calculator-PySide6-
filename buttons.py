@@ -101,6 +101,7 @@ class ButtonGrid(QGridLayout):
         #Clear button
         if button_char == 'C':
             self.display.clear()
+            self.display.setPlaceholderText('...')
             self._equation = ' '
             self.infoWidget.setText(self._equation)
 
@@ -229,5 +230,9 @@ class ButtonGrid(QGridLayout):
                 self.display.setText('') #Clean the display
             return
 
+        #prevents that the '(' and ')' will be duplicated on display
+        if text == '(' or text == ')':
+            return
+        
         #Put the button text into display
         self.display.insert(text)
