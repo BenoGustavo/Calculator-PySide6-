@@ -4,6 +4,9 @@ from paths import MEDIUM_FONT_SIZE
 from display import Display
 from info import info
 
+from save import SaveHistory
+from main_window import MainWindow, CustomMessageBox
+
 #IsNumOrDot and isEmpty don't worked properly =(
 from utils import IsNumOrDot, isEmpty, isValidNumber, isOperator, removeOperators, deleteLastChar, addDotAfterZero
 
@@ -25,7 +28,7 @@ class Button(QPushButton):
         self.setMinimumSize(75,75)
 
 class ButtonGrid(QGridLayout):
-    def __init__(self,display: Display,infoSupDisplay: info,*args,**kwargs):
+    def __init__(self,window: MainWindow,display: Display,DataSaver: SaveHistory,infoSupDisplay: info,*args,**kwargs):
         super().__init__(*args,**kwargs)
 
         self._gridMask = [
@@ -38,6 +41,9 @@ class ButtonGrid(QGridLayout):
 
         self.display = display
         self.infoWidget = infoSupDisplay
+        self.save = DataSaver
+        self.window = window
+        #self.msgbox = msgbox
 
         #Equation needs to be a ' ' (Space) because i need to check the last char in the string
         self._equation = ' '
@@ -61,6 +67,8 @@ class ButtonGrid(QGridLayout):
         self.display.leftParenthesisTrigger.connect(self._specialButtons)
         #Use right parenthesis in keyboard
         self.display.rightParenthesisTrigger.connect(self._specialButtons)
+        #Use the H keyboard key to open the History window.
+        self.display.equationHistoryTrigger.connect(self._specialButtons)
 
         for row,text in enumerate(self._gridMask):
             for column,buttonText in enumerate(text):
@@ -102,6 +110,15 @@ class ButtonGrid(QGridLayout):
     #Adding functions to the special buttons
     @Slot()
     def _specialButtons(self,button_char):
+        
+        if button_char == 'H':
+            self.save.loadData()
+            #self._showHistory(self.save.getData())
+
+            messageText = '\n\n'.join(self.save.getData())
+            messageText = messageText.replace(' ','')
+            equationHistoryWindow = CustomMessageBox(messageText,parent=self.window)
+            equationHistoryWindow.exec_()
 
         #Clear button
         if button_char == 'C':
@@ -112,7 +129,14 @@ class ButtonGrid(QGridLayout):
 
         #add the value of pi to the display
         if button_char == 'π':
-            self.display.insert('3.1415')
+            pi = 3.1415
+            newDisplayValue = self.display.text() + button_char + str(pi)
+
+            if newDisplayValue.find('.') > 0:
+                newDisplayValue.replace('.','')
+                pi = 31415
+
+            self.display.insert(str(pi))
         
         if button_char == '(':
             self.display.insert('(')
@@ -177,7 +201,7 @@ class ButtonGrid(QGridLayout):
                 float(checkOperation)
                 
                 #Add a comma after the first
-                if self._equation[1] == '0':
+                if self._equation[2] == '0':
                     self._equation = addDotAfterZero(self._equation)
 
                 #Checking open parentesis
@@ -195,6 +219,12 @@ class ButtonGrid(QGridLayout):
                 if result.is_integer():
                     result = int(result)
 
+                #Set data to save
+                self.save.setData(f'{self._equation} = {result}')
+
+                #Saving data
+                self.save.saveData()
+
                 self.display.setText(str(result))
 
                 #Reset the _equation
@@ -210,8 +240,10 @@ class ButtonGrid(QGridLayout):
 
     @Slot()
     def _insertContentIntoDisplay(self,text):
-        
         newDisplayValue = self.display.text() + text
+        
+        if newDisplayValue.count('.') >= 2:
+            return
 
         #Verify if the button text is a special button (NOT A NUMBER OR OPERATOR)
         self._specialButtons(text)

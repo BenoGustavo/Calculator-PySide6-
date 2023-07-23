@@ -15,6 +15,8 @@ class Display(QLineEdit):
     leftParenthesisTrigger = Signal(str)
     rightParenthesisTrigger = Signal(str)
 
+    equationHistoryTrigger = Signal(str)
+
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         
@@ -43,8 +45,13 @@ class Display(QLineEdit):
         isOperator = key in [KEYS.Key_Plus, KEYS.Key_Minus, KEYS.Key_Slash, KEYS.Key_Asterisk, KEYS.Key_P, KEYS.Key_Percent]
         isLeftParenthesis = key in [KEYS.Key_ParenLeft]
         isRightParenthesis = key in [KEYS.Key_ParenRight]
+        isEquationHistory = key in [KEYS.Key_H]
 
         #Setting up their signal when pressed
+        if isEquationHistory:
+            self.equationTrigger.emit('H')
+            return event.ignore()
+        
         if isEnter:
             self.equationTrigger.emit('=')
             return event.ignore()

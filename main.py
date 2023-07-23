@@ -1,9 +1,10 @@
 #Others
+import os
 import sys
 
 #Pyside imports
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLabel
+from PySide6.QtWidgets import QApplication
 
 #My imports
 from styles import setupTheme
@@ -11,14 +12,24 @@ from display import Display
 from info import info
 from paths import WINDOW_ICON_PATH
 from main_window import MainWindow
-from buttons import Button,ButtonGrid
+from buttons import ButtonGrid
+from save import SaveHistory
 
 ####################################
 #######START#OF#THE#CODE############
 ####################################
 
 if __name__ == "__main__":
-    
+
+    #History Instance
+    saveData = SaveHistory()
+
+    #If there is a save file, load it
+    if os.path.exists(saveData._filename):
+        saveData.loadData()
+    else:
+        print('no data to read')
+
     #Creating the app
     app = QApplication(sys.argv)
     setupTheme()
@@ -35,11 +46,11 @@ if __name__ == "__main__":
 
     #Setting up the display
     display = Display()
-    display.setPlaceholderText("...") #Setting a place holder text into the textbox
+    display.setPlaceholderText("Press H to open history") #Setting a place holder text into the textbox
     window.addWidgetToVLayout(display) #Adding the text box to the layout
 
     #grid
-    buttonsGrid = ButtonGrid(display,infowedget)
+    buttonsGrid = ButtonGrid(window,display,saveData,infowedget)
     window.vLayout.addLayout(buttonsGrid)
 
     #Setting up the buttons
