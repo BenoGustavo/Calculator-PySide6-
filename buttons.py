@@ -130,7 +130,7 @@ class ButtonGrid(QGridLayout):
         #add the value of pi to the display
         if button_char == 'π':
             pi = 3.1415
-            newDisplayValue = self.display.text() + button_char + str(pi)
+            newDisplayValue = self.display.text() + button_char
 
             if newDisplayValue.find('.') > 0:
                 newDisplayValue.replace('.','')
