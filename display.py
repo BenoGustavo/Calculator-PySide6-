@@ -23,12 +23,13 @@ class Display(QLineEdit):
         self.configStyle()
         self.setReadOnly(True)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.setPlaceholderText("Press H to open history") #Setting a place holder text into the textbox
 
     def configStyle(self):
         #Display style
-        self.setStyleSheet(f'font-size: {BIG_FONT_SIZE}px;') #setting font-size
-        self.setMinimumHeight(BIG_FONT_SIZE*2) #Textbox minimum height
-        self.setMinimumWidth(MINIMUM_WIDTH)
+        self.setStyleSheet(f'font-size: {BIG_FONT_SIZE}px;width: {MINIMUM_WIDTH}; ;height: {BIG_FONT_SIZE*2.1}') #setting font-size
+        #self.setMinimumHeight(BIG_FONT_SIZE*2) #Textbox minimum height
+        #self.setMinimumWidth(MINIMUM_WIDTH)
         self.setAlignment(Qt.AlignmentFlag.AlignRight)
         self.setTextMargins(TEXT_MARGIN,TEXT_MARGIN,TEXT_MARGIN,TEXT_MARGIN) #setting the margin inside the text box
 
