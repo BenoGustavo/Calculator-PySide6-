@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QPushButton,QGridLayout
 from PySide6.QtCore import Slot, Qt
+from os import path
 from paths import MEDIUM_FONT_SIZE
 from display import Display
 from info import info
@@ -112,8 +113,13 @@ class ButtonGrid(QGridLayout):
     def _specialButtons(self,button_char):
         
         if button_char == 'H':
-            self.save.loadData()
-            #self._showHistory(self.save.getData())
+            
+            #If there is a save file, load it
+            if path.exists(self.save._filename):
+                self.save.loadData()
+            else:
+                print('no data to read')
+                return
 
             messageText = '\n\n'.join(self.save.getData())
             messageText = messageText.replace(' ','')
