@@ -207,8 +207,10 @@ class ButtonGrid(QGridLayout):
                 float(checkOperation)
                 
                 #Add a comma after the first
-                if self._equation[2] == '0':
-                    self._equation = addDotAfterZero(self._equation)
+                
+                #Why i did that?
+                # if self._equation[2] == '0':
+                #     self._equation = addDotAfterZero(self._equation)
 
                 #Checking open parentesis
                 checkOpenParentesis = self._equation.rfind('(')
